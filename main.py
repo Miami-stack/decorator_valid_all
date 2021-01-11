@@ -1,7 +1,6 @@
-import functools
-import json
+"""Декоратор ValidAll."""
 import re
-from typing import Callable, Any
+from typing import Callable, Any, TypeVar
 
 import jsonschema
 
@@ -75,7 +74,7 @@ def json_validation(result: dict) -> Any:
         return False
 
 
-def regex_validation(validate_str) -> Any:
+def regex_validation(validate_str: str) -> Any:
     """Функция для валидации по регулярке."""
     string_reg = re.compile("^[a-zA-Z]+$")
     if re.fullmatch(string_reg, validate_str):
@@ -91,8 +90,12 @@ def default_function() -> None:
     return None
 
 
+RT = TypeVar('RT')
+
+
 def valid_all(input_validation: Callable, result_validation: Callable, on_fail_repeat_times: int = 1,
-              default_behavior: Callable = None) -> Any:
+              default_behavior: Callable = None) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
+    """Декоратор с аргументами."""
     def decoration(func: Callable) -> Callable:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
 
@@ -135,11 +138,12 @@ def valid_all(input_validation: Callable, result_validation: Callable, on_fail_r
     return decoration
 
 
-@valid_all(input_validation=regex_validation, result_validation=json_validation,
-           on_fail_repeat_times=2, default_behavior=default_function)
-def valid_function(stroka: str) -> dict:
-    if stroka:
-        js = {"test": stroka}
+@valid_all(input_validation=regex_validation, result_validation=json_validation, on_fail_repeat_times=2,
+           default_behavior=default_function)
+def valid_function(st: str) -> Any:
+    """Основная функция."""
+    if st:
+        js = {"test": st}
         return js
 
 

@@ -95,7 +95,7 @@ RT = TypeVar('RT')
 
 def valid_all(input_validation: Callable, result_validation: Callable, on_fail_repeat_times: int = 1,
               default_behavior: Callable = None) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
-    """Декоратор с аргументами."""
+    """Декоратор."""
     def decoration(func: Callable) -> Callable:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
 
